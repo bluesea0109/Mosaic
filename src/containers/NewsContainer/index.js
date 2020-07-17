@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Layout, Input, Pagination, Row, Col, Spin } from 'antd'
+import { Layout, Input, Pagination, Row, Col, Spin, notification } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { News, Article } from 'components'
 import {
@@ -8,6 +8,7 @@ import {
   selectPage,
   selectTotal,
   selectLoading,
+  selectError,
 } from 'store/news'
 
 const { Sider, Content } = Layout
@@ -20,6 +21,7 @@ const NewsContainer = () => {
   const page = useSelector(selectPage)
   const total = useSelector(selectTotal)
   const loading = useSelector(selectLoading)
+  const error = useSelector(selectError)
   const handleArticle = (index) => {
     setSelectedIndex(index)
   }
@@ -36,6 +38,17 @@ const NewsContainer = () => {
   useEffect(() => {
     stableDispatch(getNews({ search, page: 1 }))
   }, [stableDispatch, search])
+
+  useEffect(() => {
+    if (!error) {
+      return
+    }
+
+    notification.open({
+      message: 'Error Found',
+      description: error,
+    })
+  }, [error])
 
   return (
     <Layout>
@@ -54,7 +67,7 @@ const NewsContainer = () => {
           >
             <Col span={24}>
               <Row gutter={[0, 10]}>
-                {news.length &&
+                {news.length > 0 &&
                   news.map((item, index) => (
                     <Col key={index}>
                       <News
@@ -81,20 +94,18 @@ const NewsContainer = () => {
           </Row>
         </Spin>
       </Sider>
-      <Layout>
-        <Content style={{ height: '100vh' }}>
-          <Row
-            justify='end'
-            align='middle'
-            style={{ height: '60px', paddingRight: '10px' }}
-          >
-            <Col span={8} style={{ width: 'auto', height: 'auto' }}>
-              <Input.Search onSearch={handleSearch} enterButton />
-            </Col>
-          </Row>
-          {news.length && <Article news={news[selectedIndex]} />}
-        </Content>
-      </Layout>
+      <Content style={{ height: '100vh' }}>
+        <Row
+          justify='end'
+          align='middle'
+          style={{ height: '60px', paddingRight: '10px' }}
+        >
+          <Col span={8} style={{ width: 'auto', height: 'auto' }}>
+            <Input.Search onSearch={handleSearch} enterButton />
+          </Col>
+        </Row>
+        {news.length && <Article news={news[selectedIndex]} />}
+      </Content>
     </Layout>
   )
 }

@@ -16,7 +16,7 @@ const Article = ({ news }) => (
           </Col>
           <Col span={24}>
             <Row justify='center'>
-              <a href={news.url}>
+              <a href={news.url} target='_blank' rel='noopener noreferrer'>
                 {moment(news.publishedAt).format('YYYY-MM-DD hh:mm')}
               </a>
             </Row>

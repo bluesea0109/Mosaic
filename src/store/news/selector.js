@@ -21,3 +21,8 @@ export const selectLoading = createSelector(
   newsItem,
   (newsItem) => newsItem.news.loading,
 )
+
+export const selectError = createSelector(
+  newsItem,
+  (newsItem) => newsItem.news.error,
+)
